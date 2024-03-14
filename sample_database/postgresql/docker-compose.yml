@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  generator:
+    build:
+      context: ../generator  # generator 디렉토리의 상대 경로
+      dockerfile: Dockerfile  # 사용할 Dockerfile
+    environment:  # 필요한 환경 변수들 (예시)
+      DB_TYPE: postgresql
+      DB_USERNAME: postgres
+      DB_PASSWORD: example
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: testdb
+    depends_on:
+      - postgres  # PostgreSQL 서비스가 먼저 시작되도록 설정
+    command: ["sh", "-c", "sleep 15 && ./main"]  # 15초 대기 후 애플리케이션 실행
+
+  postgres:
+    image: postgres:latest  # 사용할 PostgreSQL 이미지
+    environment:
+      POSTGRES_DB: testdb  # 생성할 데이터베이스 이름
+      POSTGRES_USER: postgres  # PostgreSQL 사용자 이름
+      POSTGRES_PASSWORD: example  # PostgreSQL 비밀번호
+    ports:
+      - "5432:5432"  # 호스트와 컨테이너 간의 포트 매핑
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # 데이터 지속성을 위한 볼륨
+
+volumes:
+  postgres_data:  # PostgreSQL 데이터 볼륨 정의
