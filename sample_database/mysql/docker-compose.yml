@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  generator:
+    build:
+      context: ../generator  # generator 디렉토리의 상대 경로
+      dockerfile: Dockerfile  # 사용할 Dockerfile
+    environment:  # 필요한 환경 변수들 (예시)
+      DB_TYPE: mysql
+      DB_USERNAME: root
+      DB_PASSWORD: example
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: testdb
+    depends_on:
+      - mysql  # MySQL 서비스가 먼저 시작되도록 설정
+    command: ["sh", "-c", "sleep 15 && ./main"]  # 15초 대기 후 애플리케이션 실행
+
+  mysql:
+    image: mysql:latest  # 사용할 MySQL 이미지
+    environment:
+      MYSQL_ROOT_PASSWORD: example  # MySQL 루트 비밀번호 설정
+      MYSQL_DATABASE: testdb  # 생성할 데이터베이스 이름
+    ports:
+      - "3306:3306"  # 호스트와 컨테이너 간의 포트 매핑
