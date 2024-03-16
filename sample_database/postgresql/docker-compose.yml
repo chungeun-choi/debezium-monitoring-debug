@@ -15,6 +15,8 @@ services:
     depends_on:
       - postgres  # PostgreSQL 서비스가 먼저 시작되도록 설정
     command: ["sh", "-c", "sleep 15 && ./main"]  # 15초 대기 후 애플리케이션 실행
+    networks:
+      - data-cdc-network
 
   postgres:
     image: postgres:latest  # 사용할 PostgreSQL 이미지
@@ -26,6 +28,12 @@ services:
       - "5432:5432"  # 호스트와 컨테이너 간의 포트 매핑
     volumes:
       - postgres_data:/var/lib/postgresql/data  # 데이터 지속성을 위한 볼륨
+    networks:
+      - data-cdc-network
 
 volumes:
   postgres_data:  # PostgreSQL 데이터 볼륨 정의
+
+networks:
+  data-cdc-network:
+    external: true

@@ -6,6 +6,8 @@ services:
       - 2181:2181
       - 2888:2888
       - 3888:3888
+    networks:
+      - data-cdc-network
 
   kafka:
     image: quay.io/debezium/kafka:${DEBEZIUM_VERSION}
@@ -15,6 +17,8 @@ services:
       - ZOOKEEPER_CONNECT=zookeeper:2181
     depends_on:
       - zookeeper
+    networks:
+      - data-cdc-network
 
   connect:
     build:
@@ -36,6 +40,8 @@ services:
       - JMXPORT=1976
     depends_on:
       - kafka
+    networks:
+      - data-cdc-network
 
   prometheus:
     build:
@@ -46,6 +52,8 @@ services:
       - 9090:9090
     depends_on:
       - connect
+    networks:
+      - data-cdc-network
 
   grafana:
     build:
@@ -58,17 +66,21 @@ services:
       - prometheus
     environment:
       - DS_PROMETHEUS=prometheus
-
-  kafka-ui:
-    image: provectuslabs/kafka-ui:latest
-    environment:
-      KAFKA_CLUSTERS_0_NAME: local
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
-      DYNAMIC_CONFIG_ENABLED: "true"
-    ports:
-      - "8080:8080"
-    depends_on:
-      - kafka
+    networks:
+      - data-cdc-network
+#
+#  kafka-ui:
+#    image: provectuslabs/kafka-ui:latest
+#    environment:
+#      KAFKA_CLUSTERS_0_NAME: local
+#      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+#      DYNAMIC_CONFIG_ENABLED: "true"
+#    ports:
+#      - "8080:8080"
+#    depends_on:
+#      - kafka
+#    networks:
+#      - data-cdc-network
 
 networks:
   data-cdc-network:
