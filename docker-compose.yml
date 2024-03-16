@@ -29,13 +29,14 @@ services:
     ports:
       - 8083:8083
       - 1976:1976
+      - 5005:5005
     environment:
       - BOOTSTRAP_SERVERS=kafka:9092
       - GROUP_ID=1
       - CONFIG_STORAGE_TOPIC=my_connect_configs
       - OFFSET_STORAGE_TOPIC=my_connect_offsets
       - STATUS_STORAGE_TOPIC=my_connect_statuses
-      - KAFKA_OPTS=-javaagent:/kafka/etc/jmx_prometheus_javaagent.jar=8080:/kafka/etc/config.yml
+      - KAFKA_OPTS=-javaagent:/kafka/etc/jmx_prometheus_javaagent.jar=8080:/kafka/etc/config.yml -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
       - JMXHOST=localhost
       - JMXPORT=1976
     depends_on:
